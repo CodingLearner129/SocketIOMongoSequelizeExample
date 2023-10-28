@@ -1,0 +1,78 @@
+<div class="container mt-5 pt-5">
+    <h1>Register User</h1>
+    <div class="alert alert-danger" id="error" role="alert"></div>
+    <div class="alert alert-success" id="success" role="alert"></div>
+    <form id="registerUser">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" />
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" />
+            <div id="emailHelp" class="form-text">
+                We'll never share your email with anyone else.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="file" class="form-control" id="image" name="image" />
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" />
+        </div>
+        <button class="btn btn-primary" id="submitRegisterUser">Submit</button>
+    </form>
+</div>
+
+<%- contentFor('script') %>
+    <script type="text/javascript">
+        const submit = document.querySelector("#submitRegisterUser");
+        const form = document.querySelector("#registerUser");
+        let errorMessage = document.getElementById("error");
+        let successMessage = document.getElementById("success");
+        successMessage.style.display = "none";
+        errorMessage.style.display = "none";
+        submit.addEventListener("click", function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            axios({
+                method: "POST",
+                url: `<%=url%>`,
+                data: formData,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+                .then((response) => {
+                    //handle success
+                    errorMessage.style.display = "none";
+                    // successMessage.style.display = "block";
+                    // successMessage.innerHTML = "";
+                    // successMessage.innerHTML += `<p class="text-center">${response.message}</p>`;
+                    window.location = response.data.url;
+                })
+                .catch((error) => {
+                    //handle error
+                    successMessage.style.display = "none";
+                    errorMessage.style.display = "block";
+                    errorMessage.innerHTML = "";
+                    if (typeof (error.response.data.error) == 'string') {
+                        errorMessage.innerHTML += `<p class="text-center">${error.response.data.error}</p>`;
+                    } else if (Object.keys(error.response.data.error).length > 0) {
+                        Object.values(error.response.data.error).forEach((element) => {
+                            errorMessage.innerHTML += `<p class="text-center">${element.message}</p>`;
+                        });
+                    } else {
+                        errorMessage.innerHTML += `<p class="text-center">${error.response.data.message}</p>`;
+                    }
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        successMessage.style.display = "none";
+                        errorMessage.style.display = "none";
+                    }, 2000);
+                })
+        });
+    </script>

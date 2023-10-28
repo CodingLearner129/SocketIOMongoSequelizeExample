@@ -1,0 +1,18 @@
+<div class="container mt-5 pt-5">
+    <%
+        if(locals.message && typeof message !== "undefined"){
+            %>
+            <h1><%= message %></h1>
+            <%
+        }
+    %>
+</div>
+
+<%- contentFor('head') %>
+<link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="../css/custom.css" rel="stylesheet" type="text/css" />
+
+<%- contentFor('script') %>
+<script src="../js/bootstrap.bundle.min.js" type="text/javascript"></script>
+<script type="module" src="../js/axios.min.js"></script>
+<script src="../js/jquery/jquery.min.js"></script>

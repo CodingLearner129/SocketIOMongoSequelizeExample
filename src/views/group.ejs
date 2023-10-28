@@ -1,0 +1,201 @@
+<div class="container mt-5 pt-5">
+    <h1>Groups</h1>
+
+    <div class="container my-4">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createGroupModal">
+            Create group
+        </button>
+
+        <!-- Group Modal -->
+        <div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="createGroupModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createGroupModalLabel">Create Group</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            id="closeCreateGroup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="error" role="alert"></div>
+                        <form id="createGroup">
+                            <input type="hidden" class="form-control" id="groupId" name="group_id" />
+                            <input type="hidden" class="form-control" id="last_limit" name="last_limit" />
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="image" name="image" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="limit" class="form-label">Limit</label>
+                                <input type="number" class="form-control" id="limit" name="limit" maxlength="2"
+                                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="submitCreateGroup">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group Delete Modal -->
+        <div class="modal fade" id="deleteGroupModal" tabindex="-1" aria-labelledby="deleteGroupModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteGroupModalLabel">Delete Group</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            id="closeDeleteGroup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="deleteError" role="alert"></div>
+                        <form id="deleteGroup">
+                            <input type="hidden" class="form-control" id="deleteGroupId" name="group_id" />
+                            <input type="hidden" class="form-control" id="deleteGroupLimit" name="limit" />
+                            <h6>
+                                Are you sure? You want to delete
+                                <b id="deleteGroupName"></b> group.
+                            </h6>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="submitDeleteGroup">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member Modal -->
+        <div class="modal fade" id="groupMemberModal" tabindex="-1" aria-labelledby="groupMemberModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="groupMemberModalLabel">Members</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            id="closeGroupMember"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="errorMessage" role="alert"></div>
+                        <form id="groupMember">
+                            <input type="hidden" class="form-control" id="group_id" name="group_id" />
+                            <input type="hidden" class="form-control" id="group_limit" name="limit" />
+                            <table class="table table-hover table-bordered table-responsive">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col">Select</th>
+                                        <th scope="col">Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="memberList">
+                                    <tr>
+                                        <td colspan="2" class="text-center">No Member Found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="updateGroupMember">
+                            Update Member
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-success" id="success" role="alert"></div>
+    <table class="table table-hover table-bordered table-responsive">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">S.No.</th>
+                <th scope="col">Image</th>
+                <th scope="col">Name</th>
+                <th scope="col">Limit</th>
+                <th scope="col">Members</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="groupList">
+            <% if ( locals.groups && groups.length> 0) {
+                Object.entries(groups).forEach(([key, group]) => { %>
+                <tr id="<%= group.id %>">
+                    <td class="text-center">
+                        <%= ++key %>
+                    </td>
+                    <td class="text-center">
+                        <img class="rounded-circle" src="<%= group.image %>" style="height: 38px; width: 38px"
+                            alt="Group's DP" />
+                    </td>
+                    <td class="text-center">
+                        <%= group.name %>
+                    </td>
+                    <td class="text-center">
+                        <%= group.limit %>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-primary showMember" data-id="<%= group.id %>"
+                            data-limit="<%= group.limit %>" data-bs-toggle="modal" data-bs-target="#groupMemberModal">
+                            Members
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-primary updateGroupModal" data-id="<%= group.id %>"
+                            data-obj="<%= JSON.stringify(group) %>" data-bs-toggle="modal"
+                            data-bs-target="#createGroupModal">
+                            Update
+                        </button>
+                        <button type="button" class="btn btn-danger deleteGroupButton" data-id="<%= group.id %>"
+                            data-name="<%= group.name %>" data-limit="<%= group.limit %>" data-bs-toggle="modal"
+                            data-bs-target="#deleteGroupModal">
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-success copyGroupButton" data-id="<%= group.id %>">
+                            Copy
+                        </button>
+                    </td>
+                </tr>
+                <% }); } else { %>
+                    <tr>
+                        <td colspan="6" class="text-center">No Group Found.</td>
+                    </tr>
+                    <% } %>
+        </tbody>
+    </table>
+</div>
+
+<%- contentFor('head') %>
+    <link href="./css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="./css/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+    </style>
+
+<%- contentFor('script') %>
+    <script type="text/javascript" src="js/socket.io/4.6.0/socket.io.min.js"></script>
+    <script type="text/javascript" src="js/sweetalert2.all.min.js"></script>
+    <script>
+        let sender = "<%= user.email %>";
+        let senderId = "<%= user.id %>";
+        const url = `<%=url%>`;
+        const memberUrl = `<%= memberUrl %>`;
+    </script>
+    <script type="text/javascript" src="js/views/group.js"></script>
+    <script type="text/javascript" src="js/views/dashboard.js"></script>

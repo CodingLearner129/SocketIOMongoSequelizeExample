@@ -1,0 +1,80 @@
+
+    <div class="container mt-5 pt-5">
+        <h1>Group Chat</h1>
+        <!-- <a class="btn btn-danger text-center" href="<%= logout %>">logout</a> -->
+        <% if (user) { %>
+            <h1>
+                Hi, <%= user.name %>
+            </h1>
+            <% } %>
+
+        <div class="row">
+            <div class="col-md-4">
+                <ul class="list-group overflow-auto receiver_list">
+                    <% if (groups) {
+                        groups.forEach((group) => {
+                            %>
+                            <li class="list-group-item d-flex list-group-item-action list-group-item-danger justify-content-between align-items-start cursor-pointer group_list" data-id="<%= group.id %>">
+                                <div class="d-flex">
+                                    <img class="rounded-circle" src="<%= group.image %>" style="height: 38px; width: 38px;" alt="User's DP">
+                                    <div class="fw-bold my-auto mx-2"><%= group.name%></div>
+                                </div>
+                                <div class="d-flex my-auto">
+                                    <span class="badge bg-primary rounded-pill ms-2">14</span>
+                                </div>
+                            </li>
+                            <%
+                        });
+                    } %>
+                    <!-- joined groups -->
+                    <% if (joinedGroups) {
+                        joinedGroups.forEach((member) => {
+                            %>
+                            <li class="list-group-item d-flex list-group-item-action list-group-item-danger justify-content-between align-items-start cursor-pointer group_list" data-id="<%= member.group.id %>">
+                                <div class="d-flex">
+                                    <img class="rounded-circle" src="<%= member.group.image %>" style="height: 38px; width: 38px;" alt="User's DP">
+                                    <div class="fw-bold my-auto mx-2"><%= member.group.name%></div>
+                                </div>
+                                <div class="d-flex my-auto">
+                                    <span class="badge bg-primary rounded-pill ms-2">14</span>
+                                </div>
+                            </li>
+                            <%
+                        });
+                    } %>
+
+                </ul>
+            </div>
+            <div class="col-md-8">
+                <h3 class="group-start-head">Click to start chat</h3>
+                <div class="group-chat-section">
+                    <div id="group-chat-container" class="border rounded-3">
+                        <!-- <div class="sender-chat text-end m-2 pe-1">
+                            <h5 class="d-inline-block border text-success rounded-pill py-1 px-2">hi</h5>                        
+                        </div> -->
+                        <!-- <div class="group-chat text-start m-2 ps-1">
+                            <h5 class="d-inline-block border text-primary rounded-pill py-1 px-2">hi</h5>                    
+                        </div> -->
+                    </div>
+                    <form action="" class="group-chat-form">
+                        <input type="hidden" name="chat_id" id="group_chat_id" value="">
+                        <textarea name="message" id="group_message" placeholder="Enter Message" class="border rounded-3 px-3 py-2 border-success mx-2 d-inline-block" required rows="1" cols="30"></textarea>
+                        <input type="button" value="Send" id="group_send_message" class="btn btn-success rounded-pill mb-4">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- contentFor('head') %>
+    <link href="./css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="./css/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+
+<%- contentFor('script') %>
+    <script type='text/javascript' src="js/socket.io/4.6.0/socket.io.min.js"></script>
+    <script type='text/javascript' src="js/sweetalert2.all.min.js"></script>
+    <script>
+        let sender = '<%= user.email %>';
+        let senderId = '<%= user.id %>';
+    </script>
+    <script type='text/javascript' src="js/views/group-chat.js"></script>

@@ -1,0 +1,69 @@
+
+    <div class="container mt-5 pt-5">
+        <h1>Dashboard</h1>
+        <!-- <a class="btn btn-danger text-center" href="<%= logout %>">logout</a> -->
+        <% if (user) { %>
+            <h1>
+                Hi, <%= user.name %>
+            </h1>
+            <% } %>
+
+        <div class="row">
+            <div class="col-md-4">
+                <ul class="list-group overflow-auto receiver_list">
+                    <% if (users) {
+                        users.forEach((user) => {
+                            %>
+                            <li class="list-group-item d-flex list-group-item-action list-group-item-danger justify-content-between align-items-start cursor-pointer user_list" data-id="<%= user.email %>" data-attr="<%= user.id %>">
+                                <div class="ms-2 me-auto">
+                                    <div class="d-flex">
+                                        <img class="rounded-circle" src="<%= user.image %>" style="height: 38px; width: 38px;" alt="User's DP">
+                                        <div class="fw-bold my-auto mx-2"><%= user.name%></div>
+                                    </div>
+                                    <div class="time my-auto mx-2" id="<%= ((user.email).split(/[.@]/)).join('-') %>-time"><%= user?.is_online ? "" : user?.lastSeenAt ? `Last Seen ${(user.lastSeenAt).toLocaleString()}` : ""%></div>
+                                </div>
+                                <% if (user.is_online) { %>
+                                    <span class="badge bg-success rounded-pill" id="<%= ((user.email).split(/[.@]/)).join('-') %>-status">Online</span>
+                                <% } else { %>
+                                    <span class="badge bg-danger rounded-pill" id="<%= ((user.email).split(/[.@]/)).join('-') %>-status">Offline</span>
+                                <% } %>
+                                <span class="badge bg-primary rounded-pill ms-2">14</span>
+                            </li>
+                            <%
+                        });
+                    } %>
+                </ul>
+            </div>
+            <div class="col-md-8">
+                <h3 class="start-head">Click to start chat</h3>
+                <div class="chat-section">
+                    <div id="chat-container" class="border rounded-3">
+                        <!-- <div class="sender-chat text-end m-2 pe-1">
+                            <h5 class="d-inline-block border text-success rounded-pill py-1 px-2">hi</h5>                        
+                        </div> -->
+                        <!-- <div class="receiver-chat text-start m-2 ps-1">
+                            <h5 class="d-inline-block border text-primary rounded-pill py-1 px-2">hi</h5>                    
+                        </div> -->
+                    </div>
+                    <form action="" class="chat-form">
+                        <input type="hidden" name="chat_id" id="chat_id" value="">
+                        <textarea name="message" id="message" placeholder="Enter Message" class="border rounded-3 px-3 py-2 border-success mx-2 d-inline-block" required rows="1" cols="30"></textarea>
+                        <input type="button" value="Send" id="send_message" class="btn btn-success rounded-pill mb-4">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- contentFor('head') %>
+    <link href="./css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="./css/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+
+<%- contentFor('script') %>
+    <script type='text/javascript' src="js/socket.io/4.6.0/socket.io.min.js"></script>
+    <script type='text/javascript' src="js/sweetalert2.all.min.js"></script>
+    <script>
+        let sender = '<%= user.email %>';
+        let senderId = '<%= user.id %>';
+    </script>
+    <script type='text/javascript' src="js/views/dashboard.js"></script>
