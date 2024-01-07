@@ -14,6 +14,11 @@ $(document).ready(function () {
         group = $(this).attr('data-id');
         $('.group-start-head').hide();
         $('.group-chat-section').show();
+        socket.emit('joinRoom', {
+            group
+        }, message => {
+            console.log(message);
+        });
         socket.emit('loadOldGroupChat', {
             sender,
             group,
