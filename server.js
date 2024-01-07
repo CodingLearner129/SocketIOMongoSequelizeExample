@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import { config } from './src/config/config.js';
 import { setTimeout } from 'timers/promises';
 import os from 'os';
+import { instrument } from "@socket.io/admin-ui";
 
 // get all the cores of cpu
 // const cpuCores = os.cpus();
@@ -99,11 +100,21 @@ adminIO.on('connection', (socket) => {
 });
 
 const uspIO = io.of('/user-namespace');
+uspIO.use((socket, next) => {
+    if(socket.handshake.auth.token){
+        socket.userEmail = socket.handshake.auth.token; 
+        next();
+    } else { 
+        next(new Error("Please send token"));
+    }
+});
 uspIO.on('connection', async (socket) => {
     console.log('---------------------------------');
     console.log('New user connected');
     console.log('---------------------------------');
     console.log({socketId: socket.id, user: socket.handshake.auth.token});
+    console.log('---------------------------------');
+    console.log({socketId: socket.id, user: socket.userEmail});
     console.log('---------------------------------');
     await setOnlineStatus(socket, uspIO, 1);
     userEvents(socket, uspIO);
@@ -118,6 +129,12 @@ uspIO.on('connection', async (socket) => {
         console.log('---------------------------------');
     });
 });
+
+instrument(io, {
+    namespaceName: "/admin-ui",
+    auth: false,
+    mode: "development",
+  });
 
 // get env data from config file
 const port = config.port;
