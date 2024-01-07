@@ -4,7 +4,12 @@ let io;
 
 export default {
     init: (httpServer) => {
-        io = new Server(httpServer)
+        io = new Server(httpServer, {
+            cors: {
+              origin: ["https://admin.socket.io"],
+              credentials: true
+            }
+          })
         return io;
     },
     getIO: () => {
